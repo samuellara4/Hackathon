@@ -14,6 +14,20 @@ class GroceryList:
 
     def __init__(self):
         self._g_list = self.generate_grocery_list()
+        self._grocery_item = ""
+        self._quantity = 0
+
+    def get_grocery(self):
+        return self._grocery_item
+
+    def get_quantity(self):
+        return self._quantity
+
+    def set_grocery_item(self, item_to_set):
+        self._grocery_item = item_to_set
+
+    def set_quantity(self, quantity_to_set):
+        self._quantity = quantity_to_set
 
     def get_grocery_list(self):
         return self._g_list
@@ -48,40 +62,58 @@ class GroceryList:
                     selection_list.append(item)
 
             self.selection_menu(selection_list)
-            # print(selection_list)
+
+            print(f"You have added {self.get_quantity()} {self.get_grocery()}")
 
     def selection_menu(self, list_to_select_from):
         if list_to_select_from == []:
             print("Item Not Found.Try again \n")
             return False
-        valid_selection = False
-        while valid_selection:
+        invalid_selection = True
+        while invalid_selection:
+            # print("invalid_selection:", invalid_selection)
             print("Choose from the following items:")
             counter = 1
-            for item in list_to_select_from:
+            for item in list_to_select_from:  # menu selection
                 print(f"{counter} - {item}")
                 counter += 1
 
-            user_selection = int(input())
-            print(user_selection)
-            if not self.valid_item_selection(counter, user_selection):
-                print("while loop")
+            try:
+                user_selection = int(input("Your selection: "))
+            except ValueError:
+                print("Select from the menu only \n")
+                continue
+            # print(user_selection, list_to_select_from)
+            if self.valid_item_selection(counter, user_selection):
+                quantity = input("How many would you like to add? ")
+                selected_item = list_to_select_from[user_selection-1]
+                self.set_quantity(quantity)
+                self.set_grocery_item(selected_item)
+                print("return", quantity, selected_item)
+                return
+                # invalid_selection = False
+            # else:
+            #     invalid_selection = True
+                # print("Try again")
+            # break
+          # get quantity
+            # invalid_selection = False
 
-            else:
-                print("How many would you like to add?")
 
     def valid_item_selection(self, selections, user_selection):
-        print("valid_selection")
-        if not 1 <= user_selection <= selections:
-            print("False")
+        # print("Checking if valid_selection")
+        # print(selections)
+        if not 1 <= user_selection <= selections-1:
+            print("Try again. See menu below for available options\n")
             return False
-        print("True")
+        # print("True")
         return True
 
 def main():
     g_list = GroceryList()
     # print(g_list)
     g_list.get_user_items()
+    # generate_shopping_list()
 
 
 if __name__ == '__main__':
