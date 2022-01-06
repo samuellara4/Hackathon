@@ -33,12 +33,13 @@ def get_user_items():
         if not valid_item(item_to_search):
             print("Item not found")
         else:
-
+            pass
 
 
 
 def valid_item(item_to_check):
     """"""
+    pass
 
 
 
