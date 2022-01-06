@@ -38,7 +38,7 @@ def get_user_items():
 
 
 def valid_item(item_to_check):
-    """"""
+    """a"""
     pass
 
 
