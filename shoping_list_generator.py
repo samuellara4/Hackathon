@@ -6,17 +6,11 @@
 import csv
 
 
-class ItemNotFoundError(Exception):
-    pass
-
-
 class GroceryList:
 
     def __init__(self):
 
-        # grocery list data
         self._g_list = self.generate_grocery_list()
-        # item attributes
         self._grocery_item = ""
         self._quantity = 0
         self._desc = ""
@@ -47,7 +41,6 @@ class GroceryList:
         return self._shopping_list_data
 
     def generate_grocery_list(self):
-        # grocery_list = list()
         with open('Groceries_dataset.csv', 'r') as infile:
             data_list = csv.reader(infile)
             grocery_items = list()
@@ -56,16 +49,14 @@ class GroceryList:
                     continue
 
                 grocery_items.append(line[2])
-            # print(len(grocery_items))
             grocery_set = set(grocery_items)  # remove duplicates - reduces list from 38765 to 167 items
             grocery_items = list(grocery_set)
-            # print(len(grocery_items))
         return grocery_items
 
     def get_user_items(self):
+        """Gets the grocery data from the user """
         adding_items = True
         selection_list = list()
-
         while adding_items:
             item_to_search = input("What item do you want to add to your shopping list? \n")
             for item in self.get_grocery_list():
@@ -75,25 +66,24 @@ class GroceryList:
             if selection_list == []:
                 print("Item not found. Try again")
 
-        self.selection_menu(selection_list)
-        # print(f"You have added {self.get_quantity()} {self.get_grocery()} Specification: {self.get_desc()} \n")
-        self.add_item(self.get_grocery(), self.get_desc(), self.get_quantity())
+        self.selection_menu(selection_list)  # will generate the selection menu using the items searched
+        self.add_item(self.get_grocery(), self.get_desc(), self.get_quantity())  # adds item to shopping list data
 
         add_more_items = input("Would you like to add more items? (Y/N) ")
         if add_more_items[0].lower() == "y":
-            print("adding more")
             self.get_user_items()
-            return # break
+            return
         elif add_more_items[0].lower() == "n":
-            print("no more add")
-            return # break
+            print("Done adding")
+            return
         else:
             print("Invalid choice")
-            return # False
+            return
 
-        return self.get_shopping_list_data()
+        # return self.get_shopping_list_data()
 
     def add_item(self, grocery_name, grocery_desc, grocery_quantity):
+        """Takes the grocery input and adds it to the shopping list data"""
         add_list = list()
         add_list.append(grocery_name)
         add_list.append(grocery_desc)
@@ -101,6 +91,8 @@ class GroceryList:
         self.get_shopping_list_data().append(add_list)
 
     def selection_menu(self, list_to_select_from):
+        """creates the selection menu for the user to choose items from after searching for keyword
+        checks that the selection is valid """
         invalid_selection = True
         if list_to_select_from == []:
             print("Item Not Found.Try again \n")
@@ -109,7 +101,7 @@ class GroceryList:
             # print("invalid_selection:", invalid_selection)
             print("Choose from the following items:")
             counter = 1
-            for item in list_to_select_from:  # menu selection
+            for item in list_to_select_from:  # generates the menu selection
                 print(f"{counter} - {item}")
                 counter += 1
 
@@ -118,18 +110,19 @@ class GroceryList:
             except ValueError:
                 print("Select from the menu only \n")
                 continue
-            if self.valid_item_selection(counter, user_selection):
-                brand_description = input("What brand or type? ")
+            if self.valid_item_selection(counter, user_selection):  # checks that selection is valid
+                brand_description = input("What brand or type? ")  # and collects data for shopping list
                 quantity = input("How many would you like to add? ")
                 selected_item = list_to_select_from[user_selection-1]
                 self.set_desc(brand_description)
                 self.set_quantity(quantity)
                 self.set_grocery_item(selected_item)
-                print("return", quantity, selected_item, brand_description)
+                # print("return", quantity, selected_item, brand_description)
                 return
 
-    def valid_item_selection(self, selections, user_selection):
-
+    @staticmethod
+    def valid_item_selection(selections, user_selection):
+        """Checks that the selection from the user is valid to what is on the menu"""
         if not 1 <= user_selection <= selections-1:
             print("Try again. See menu below for available options\n")
             return False
@@ -137,23 +130,20 @@ class GroceryList:
 
 
 def generate_shopping_list_file(list_to_generate):
-    headers = l1 = [["Type", "Brand/Description", "Quantity"]]
+    """Accepts the shopping data list and generates the csv file"""
+    headers = [["Type", "Brand/Description", "Quantity"]]  # headers for the data
     complete_list = headers + list_to_generate
-    # print(complete_list)
     with open('shopping_list.csv', 'w') as outfile:
-        for line in complete_list:
-
-            outfile.write(line)
-        # for row in complete_list:
-        #     csv_str = ""
-        #     for grocery in complete_list[row]:
+        for row in range(0, len(complete_list)):
+            csv_str = ""
+            for item in complete_list[row]:
+                csv_str += item + ","  # adds the items in each line and puts a comma in between them
+            outfile.write(csv_str + "\n")  # writes line to the file
 
 
 def main():
     g_list = GroceryList()
-    # print(g_list)
     g_list.get_user_items()
-    # g_list.generate_shopping_list()
     shopping_list1 = g_list.get_shopping_list_data()
     # need function to iterate through list and generate the shopping list csv file
     generate_shopping_list_file(shopping_list1)
