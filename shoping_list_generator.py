@@ -1,15 +1,14 @@
 # Author: Samuel Lara
-# Date: 01/05/2022
+# Date: 01/08/2022
 # Description: This program will take user input and compare the item searched to a groceries data set and generate a
 # shopping list and save as a csv file
-
 import csv
 
 
 class GroceryList:
-
+    """Grocery list class"""
     def __init__(self):
-
+        """Initializes grocery list (g_list), the attributes needed for the shopping list"""
         self._g_list = self.generate_grocery_list()
         self._grocery_item = ""
         self._quantity = 0
@@ -17,38 +16,48 @@ class GroceryList:
         self._shopping_list_data = list()
 
     def get_grocery(self):
+        """return the grocery item"""
         return self._grocery_item
 
     def get_quantity(self):
+        """returns the quantity of the item"""
         return self._quantity
 
     def get_desc(self):
+        """returns the description of the item"""
         return self._desc
 
     def set_grocery_item(self, item_to_set):
+        """sets the grocery item"""
         self._grocery_item = item_to_set
 
     def set_quantity(self, quantity_to_set):
+        """sets teh quantity of the item"""
         self._quantity = quantity_to_set
 
     def set_desc(self, desc_to_set):
+        """sets the description of the item"""
         self._desc = desc_to_set
 
     def get_grocery_list(self):
+        """returns the grocery list data which is a list of items available"""
         return self._g_list
 
     def get_shopping_list_data(self):
+        """returns the shopping list data, which is a list of lists"""
         return self._shopping_list_data
 
-    def generate_grocery_list(self):
+    @staticmethod
+    def generate_grocery_list():
+        """generates the items available from the file Groceries_dataset.csv that was downloaded from Kaggel
+        (https://www.kaggle.com/heeraldedhia/groceries-dataset), removes duplicates, and stores the data as a list"""
         with open('Groceries_dataset.csv', 'r') as infile:
             data_list = csv.reader(infile)
             grocery_items = list()
             for line in data_list:
                 if line[2].lower() == "itemdescription":  # remove the header from the list
                     continue
-
-                grocery_items.append(line[2])
+                grocery_items.append(line[2])  # appends all the groceries from the dataset
             grocery_set = set(grocery_items)  # remove duplicates - reduces list from 38765 to 167 items
             grocery_items = list(grocery_set)
         return grocery_items
@@ -68,7 +77,7 @@ class GroceryList:
 
         self.selection_menu(selection_list)  # will generate the selection menu using the items searched
         self.add_item(self.get_grocery(), self.get_desc(), self.get_quantity())  # adds item to shopping list data
-
+        # need to work out bug that occurs when input is other that y/n
         add_more_items = input("Would you like to add more items? (Y/N) ")
         if add_more_items[0].lower() == "y":
             self.get_user_items()
